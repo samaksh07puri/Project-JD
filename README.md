@@ -300,12 +300,31 @@ curl -X POST http://localhost:8000/api/customize \
 
 ## Deployment
 
-### Frontend (Vercel)
-1. Import the repo into Vercel, set **Root Directory** to `frontend`.
-2. Add env var `NEXT_PUBLIC_API_URL` = your deployed backend URL.
-3. Deploy.
+### Option A — one Vercel project (services)
 
-### Backend (Render / Railway / Google Cloud Run)
+The root `vercel.json` declares two **services** (`backend` = FastAPI, `frontend` = Next.js) with
+top-level rewrites: `/api/*` -> `backend`, everything else -> `frontend`. One project, one domain,
+no CORS and no `NEXT_PUBLIC_API_URL` to wire up (frontend calls same-origin `/api/...`).
+
+1. Import the repo into Vercel as a single project.
+2. Add these project environment variables:
+   - `GEMINI_API_KEY` (or `OPENAI_API_KEY` / `GROQ_API_KEY`)
+   - `JWT_SECRET` (a long random string)
+   - `FRONTEND_URL` (your Vercel URL, for password-reset links)
+   - `DATABASE_URL` (a Postgres DSN — **required here**, because Vercel's filesystem is read-only
+     so SQLite cannot persist). Without it, customization still works but accounts/history won't.
+3. Deploy. The app is served from the project's `*.vercel.app` domain.
+
+> Limitations on serverless Vercel: request bodies are capped (~4.5 MB), long LLM calls must fit
+> the function time limit, and streaming (SSE) may be buffered. For heavy use, prefer Option B.
+
+### Option B — split frontend + backend
+
+**Frontend (Vercel):** import the repo, set **Root Directory** to `frontend`, and add
+`NEXT_PUBLIC_API_URL` = your backend URL. (Remove the root `vercel.json` services block first, or
+deploy the `frontend` directory as its own project.)
+
+**Backend (Render / Railway / Google Cloud Run):**
 
 **Render** (uses `backend/render.yaml`):
 1. Create a new Blueprint from the repo.
@@ -314,8 +333,8 @@ curl -X POST http://localhost:8000/api/customize \
 **Docker / Cloud Run:**
 ```bash
 cd backend
-docker build -t resume-aid-api .
-docker run -p 8000:8000 --env-file .env resume-aid-api
+docker build -t resume-customizer-api .
+docker run -p 8000:8000 --env-file .env resume-customizer-api
 ```
 
 After deploying, set the backend's `ALLOWED_ORIGINS` to your frontend URL and the frontend's

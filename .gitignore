@@ -32,3 +32,6 @@ yarn-error.log*
 Thumbs.db
 .idea/
 .vscode/
+
+.vercel
+.env*

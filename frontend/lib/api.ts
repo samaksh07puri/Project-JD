@@ -9,8 +9,16 @@ import type {
   User,
 } from "./types";
 
+// On Vercel "services" the frontend and API share one domain, so the API is
+// reached through the same-origin rewrites declared in the root vercel.json
+// (all requests use relative "/api/..." paths). Local development points the
+// frontend at the separate backend via NEXT_PUBLIC_API_URL (see
+// .env.local.example); when that is unset and we are not in production we fall
+// back to the default local uvicorn port.
+const configuredApiUrl = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "");
 const API_URL =
-  process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") || "http://localhost:8000";
+  configuredApiUrl ||
+  (process.env.NODE_ENV === "production" ? "" : "http://localhost:8000");
 
 /** Error carrying the backend's human-readable detail message. */
 export class ApiError extends Error {
