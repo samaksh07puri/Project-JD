@@ -1,0 +1,40 @@
+services:
+  - type: web
+    name: resume-aid-api
+    runtime: python
+    plan: free
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /api/health
+    envVars:
+      - key: LLM_PROVIDER
+        value: gemini
+      - key: LLM_MODEL
+        value: gemini-3.5-flash-lite
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: ALLOWED_ORIGINS
+        sync: false
+      # Signed JWT secret for auth tokens. Render generates a secure value.
+      - key: JWT_SECRET
+        generateValue: true
+      # Optional: set a Postgres DSN for persistent history across deploys.
+      # Without it the app falls back to ephemeral SQLite.
+      - key: DATABASE_URL
+        sync: false
+      # Public URL of the deployed frontend (for password-reset links).
+      - key: FRONTEND_URL
+        sync: false
+      # Optional SMTP for real password-recovery emails. Leave unset to log the
+      # reset link to the server console instead.
+      - key: SMTP_HOST
+        sync: false
+      - key: SMTP_PORT
+        value: "587"
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASSWORD
+        sync: false
+      - key: SMTP_FROM
+        sync: false
