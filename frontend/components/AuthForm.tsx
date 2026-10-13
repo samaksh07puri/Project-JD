@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { AlertCircle, Lock, Mail } from "lucide-react";
+import { AlertCircle, Eye, EyeOff, Lock, Mail } from "lucide-react";
 import logo from "@/assets/logo.png";
 import Spinner from "./Spinner";
 import PasswordStrength from "./PasswordStrength";
@@ -27,6 +27,8 @@ export default function AuthForm({ mode }: AuthFormProps) {
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [showForgot, setShowForgot] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
 
   const isSignup = mode === "signup";
   const passwordValid = evaluatePassword(password).valid;
@@ -122,15 +124,25 @@ export default function AuthForm({ mode }: AuthFormProps) {
                 <Lock className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
                 <input
                   id="password"
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   autoComplete={isSignup ? "new-password" : "current-password"}
                   required
                   value={password}
                   onChange={(event) => setPassword(event.target.value)}
                   disabled={submitting}
                   placeholder={isSignup ? "Create a strong password" : "Your password"}
-                  className="input pl-10"
+                  className="input pl-10 pr-10"
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((value) => !value)}
+                  disabled={submitting}
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                  aria-pressed={showPassword}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-1.5 text-slate-400 hover:text-slate-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
+                >
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
               </div>
               {isSignup && password.length > 0 && <PasswordStrength value={password} />}
               {!isSignup && (
@@ -153,15 +165,25 @@ export default function AuthForm({ mode }: AuthFormProps) {
                   <Lock className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
                   <input
                     id="confirm"
-                    type="password"
+                    type={showConfirm ? "text" : "password"}
                     autoComplete="new-password"
                     required
                     value={confirm}
                     onChange={(event) => setConfirm(event.target.value)}
                     disabled={submitting}
                     placeholder="Re-enter your password"
-                    className="input pl-10"
+                    className="input pl-10 pr-10"
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirm((value) => !value)}
+                    disabled={submitting}
+                    aria-label={showConfirm ? "Hide password" : "Show password"}
+                    aria-pressed={showConfirm}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-1.5 text-slate-400 hover:text-slate-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
+                  >
+                    {showConfirm ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
                 </div>
                 {confirm && (
                   <p
