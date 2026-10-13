@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { LogOut } from "lucide-react";
+import { History, LogOut } from "lucide-react";
 import logo from "@/assets/logo.png";
 import { useAuth } from "@/lib/auth";
 
@@ -41,6 +41,10 @@ export default function Header() {
             <span className="h-8 w-20 animate-pulse rounded-lg bg-slate-100" />
           ) : user ? (
             <div className="flex items-center gap-1.5">
+              <Link href="/history" className="btn-secondary btn-sm" title="History">
+                <History className="h-4 w-4" />
+                <span className="hidden sm:inline">History</span>
+              </Link>
               <button
                 type="button"
                 onClick={logout}
