@@ -29,6 +29,8 @@ export default function AuthForm({ mode }: AuthFormProps) {
   const [showForgot, setShowForgot] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [passwordFocused, setPasswordFocused] = useState(false);
+  const [confirmFocused, setConfirmFocused] = useState(false);
 
   const isSignup = mode === "signup";
   const passwordValid = evaluatePassword(password).valid;
@@ -129,20 +131,28 @@ export default function AuthForm({ mode }: AuthFormProps) {
                   required
                   value={password}
                   onChange={(event) => setPassword(event.target.value)}
+                  onFocus={() => setPasswordFocused(true)}
+                  onBlur={() => {
+                    setPasswordFocused(false);
+                    setShowPassword(false);
+                  }}
                   disabled={submitting}
                   placeholder={isSignup ? "Create a strong password" : "Your password"}
                   className="input pl-10 pr-10"
                 />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword((value) => !value)}
-                  disabled={submitting}
-                  aria-label={showPassword ? "Hide password" : "Show password"}
-                  aria-pressed={showPassword}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-1.5 text-slate-400 hover:text-slate-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
-                >
-                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                </button>
+                {passwordFocused && (
+                  <button
+                    type="button"
+                    onMouseDown={(event) => event.preventDefault()}
+                    onClick={() => setShowPassword((value) => !value)}
+                    disabled={submitting}
+                    aria-label={showPassword ? "Hide password" : "Show password"}
+                    aria-pressed={showPassword}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-1.5 text-slate-400 hover:text-slate-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
+                  >
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
+                )}
               </div>
               {isSignup && password.length > 0 && <PasswordStrength value={password} />}
               {!isSignup && (
@@ -170,20 +180,28 @@ export default function AuthForm({ mode }: AuthFormProps) {
                     required
                     value={confirm}
                     onChange={(event) => setConfirm(event.target.value)}
+                    onFocus={() => setConfirmFocused(true)}
+                    onBlur={() => {
+                      setConfirmFocused(false);
+                      setShowConfirm(false);
+                    }}
                     disabled={submitting}
                     placeholder="Re-enter your password"
                     className="input pl-10 pr-10"
                   />
-                  <button
-                    type="button"
-                    onClick={() => setShowConfirm((value) => !value)}
-                    disabled={submitting}
-                    aria-label={showConfirm ? "Hide password" : "Show password"}
-                    aria-pressed={showConfirm}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-1.5 text-slate-400 hover:text-slate-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
-                  >
-                    {showConfirm ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                  </button>
+                  {confirmFocused && (
+                    <button
+                      type="button"
+                      onMouseDown={(event) => event.preventDefault()}
+                      onClick={() => setShowConfirm((value) => !value)}
+                      disabled={submitting}
+                      aria-label={showConfirm ? "Hide password" : "Show password"}
+                      aria-pressed={showConfirm}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-1.5 text-slate-400 hover:text-slate-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
+                    >
+                      {showConfirm ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </button>
+                  )}
                 </div>
                 {confirm && (
                   <p
